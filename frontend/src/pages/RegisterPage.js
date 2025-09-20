@@ -1,21 +1,29 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://127.0.0.1:5000/api/users/register", {
+      const res = await axios.post("/api/users/register", {
         name,
         email,
         password,
       });
-      setMessage("✅ Registered successfully! Token: " + res.data.token);
+
+      // save token in localStorage
+      localStorage.setItem("token", res.data.token);
+      setMessage("✅ Registered successfully!");
+
+      // redirect to dashboard
+      navigate("/dashboard");
     } catch (error) {
       setMessage("❌ " + (error.response?.data?.message || "Registration failed"));
     }
