@@ -4,9 +4,16 @@ import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   const token = localStorage.getItem("token");
+
+  const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("token");
+    window.location.href = "/login"; // redirect to login
+  };
 
   return (
     <Router>
@@ -23,15 +30,15 @@ function App() {
           ) : (
             <>
               <Link to="/dashboard">Dashboard</Link> |{" "}
-              <Link to="/login" onClick={() => localStorage.clear()}>
-                Logout
-              </Link>
+              <Link to="/profile">Profile</Link> |{" "}
+              <button onClick={handleLogout}>Logout</button>
             </>
           )}
         </nav>
 
         {/* Routes */}
         <Routes>
+          <Route path="/" element={<RegisterPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route
@@ -42,8 +49,14 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* Default route */}
-          <Route path="/" element={<RegisterPage />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
     </Router>
